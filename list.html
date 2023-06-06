@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Reservation App</title> 
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>  
+     <link rel="stylesheet" href="css/liststyle.css">
+</head>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+        background-image: url('./img/background.jpg');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+    }
+
+    body::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        background: rgba(47, 103, 177, 0.6);
+    }
+
+    .card {
+        max-height: fit-content;
+        min-height: fit-content;
+        margin: 10px 10px 0px 10px;
+
+    }
+
+    .card-footer {
+        margin-top: auto;
+    }
+</style>
+<script>
+    const electron = require('electron');
+    const {
+        ipcRenderer
+    } = electron;
+    ipcRenderer.send("reservations:request:list");
+    ipcRenderer.on("reservations:response:list", (event, reservations) => {
+        let el = document.getElementById('filler');
+        reservations.forEach(reservation => {
+
+            el.innerHTML += `<tr>						      
+						      <td>${reservation.username}</td>
+						      <td>${reservation.email}</td>
+						      <td>${reservation.Hotel_Id}</td>
+                              <td><button onclick="myFunction('${reservation.id}',${reservation.Hotel_Id})" type="button" class="btn btn-primary btn-sm btn-block">Mark as done?</button></div>                 
+                </td>
+                <td>${reservation.id}</td>
+						    </tr>`
+        });
+    });
+</script>
+<script>
+    function myFunction(String, int) {
+        alert("Marked as done, table now added to vacant list");
+        ipcRenderer.send("reservation:done", String, int);
+
+    }
+</script>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-wrap">
+                        <table class="table">
+                            <thead class="thead-primary">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Hotel ID</th>
+                                    <th>Action</th>
+                                    <th>Booking ID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filler">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+</body>
+
+</html>
